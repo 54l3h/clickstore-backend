@@ -1,14 +1,22 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { UserRepository } from 'src/database/repositories';
-import { UserModel } from 'src/database/models';
+import { OtpRepository, UserRepository } from 'src/database/repositories';
+import { OtpModel, UserModel } from 'src/database/models';
 import { TokenService } from 'src/common/services';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
+import { OtpService } from 'src/common/utils';
 
 @Module({
-  imports: [UserModel, JwtModule],
+  imports: [UserModel, OtpModel],
   controllers: [AuthController],
-  providers: [AuthService, UserRepository, TokenService],
+  providers: [
+    AuthService,
+    UserRepository,
+    TokenService,
+    JwtService,
+    OtpRepository,
+    OtpService,
+  ],
 })
 export class AuthModule {}

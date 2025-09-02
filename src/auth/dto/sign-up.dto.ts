@@ -3,11 +3,12 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsStrongPassword,
   MinLength,
 } from 'class-validator';
-import { RolesEnum } from 'src/common/types';
+import { GenderEnum, RolesEnum } from 'src/common/types';
 
 export class SignupDto {
   @ApiProperty()
@@ -30,7 +31,17 @@ export class SignupDto {
   @IsStrongPassword()
   password: string;
 
-  // @ApiProperty()
-  // @IsEnum(RolesEnum)
-  // role: string;
+  @ApiProperty()
+  @IsOptional()
+  @IsEnum(RolesEnum)
+  role: string;
+
+  @ApiProperty()
+  @IsEnum(GenderEnum)
+  gender: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  phone: string;
 }

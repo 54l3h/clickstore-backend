@@ -1,17 +1,12 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
-  Param,
-  Delete,
-  UseGuards,
   Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignupDto, SigninDto } from './dto';
-import { AuthGuard } from '../common/guards';
+import { SignupDto, SigninDto, ConfirmEmailDto } from './dto';
 import type { Request } from 'express';
 import { Auth, Roles } from 'src/common/decorators';
 import { RolesEnum } from 'src/common/types';
@@ -29,5 +24,12 @@ export class AuthController {
   @Post('signin')
   signin(@Body() dto: SigninDto) {
     return this.authService.signin(dto);
+  }
+
+  @Patch('confirm-email')
+  @Auth()
+  confirmEmail(@Req() req: Request, @Body() dto: ConfirmEmailDto) {
+    const userId = req['user'].id; // string
+    return this.authService.confirmEmail(userId, dto);
   }
 }

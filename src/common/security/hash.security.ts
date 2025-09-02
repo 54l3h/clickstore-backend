@@ -1,3 +1,4 @@
+// Updated hash utilities (verify parameter order)
 import * as argon2 from 'argon2';
 
 export const hash = async (plaintext: string): Promise<string> => {
@@ -11,6 +12,12 @@ export const hash = async (plaintext: string): Promise<string> => {
   return await argon2.hash(plaintext, argon2Options);
 };
 
-export const comparePassword = async (hashText: string, password: string) => {
-  return argon2.verify(hashText, password);
+// Make sure parameter order is correct: (hashedValue, plainTextValue)
+export const verifyHash = async (hashedValue: string, plainText: string): Promise<boolean> => {
+  try {
+    return await argon2.verify(hashedValue, plainText);
+  } catch (error) {
+    console.error('Hash verification error:', error);
+    return false;
+  }
 };

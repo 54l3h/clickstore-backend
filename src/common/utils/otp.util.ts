@@ -1,8 +1,11 @@
-export function generateOTP(length = 6): string {
-  const digits = '0123456789';
-  let otp = '';
-  for (let i = 0; i < length; i++) {
-    otp += digits[Math.floor(Math.random() * 10)];
+import { Injectable } from '@nestjs/common';
+import * as crypto from 'crypto';
+
+@Injectable()
+export class OtpService {
+  generateOtp(length = 6): string {
+    return crypto.randomInt(0, Math.pow(10, length))
+      .toString()
+      .padStart(length, '0');
   }
-  return otp;
 }

@@ -4,6 +4,7 @@ interface IFoundOneOptions<TDocument> {
   filters: FilterQuery<TDocument>;
   select?: ProjectionType<TDocument>;
   populateArray?: PopulateOptions[];
+  sort?: string | {};
 }
 
 interface IFoundManyOptions<TDocument> {
@@ -12,7 +13,7 @@ interface IFoundManyOptions<TDocument> {
   populateArray?: PopulateOptions[];
 }
 
-export abstract class DatabaseService<TDocument> {
+export abstract class BaseRepository<TDocument> {
   constructor(private readonly model: Model<TDocument>) {}
 
   async create(document: Partial<TDocument>): Promise<TDocument> {
@@ -23,8 +24,12 @@ export abstract class DatabaseService<TDocument> {
     filters,
     select = '',
     populateArray = [],
+    sort = {},
   }: IFoundOneOptions<TDocument>): Promise<TDocument | null> {
-    return await this.model.findOne(filters, select).populate(populateArray);
+    return await this.model
+      .findOne(filters, select)
+      .populate(populateArray)
+      .sort(sort);
   }
 
   async find({
@@ -33,5 +38,9 @@ export abstract class DatabaseService<TDocument> {
     populateArray = [],
   }: IFoundManyOptions<TDocument>): Promise<TDocument[] | null> {
     return await this.model.find(filters, select).populate(populateArray);
+  }
+
+  async save(document: TDocument) {
+    return this.save(document);
   }
 }

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { TokenService } from '../services';
 import { UserRepository } from 'src/database/repositories';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -28,8 +29,12 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('Invalid token format');
       }
 
-      const { id, userType } = this.tokenService.verifyToken(token);
-      const user = await this.userRepository.findOne({ filters: { _id: id } });
+      const { id, userType } = this.tokenService.verifyToken(
+        token,
+        process.env.JWT_ACCESS_SECRET!,
+      );
+
+      const user = await this.userRepository.findById(id);
 
       if (!user) {
         throw new UnauthorizedException('User not found');
@@ -42,7 +47,7 @@ export class AuthGuard implements CanActivate {
       request['user'] = { id, userType };
       return true;
     } catch (error) {
-      throw new Error(error.message);
+      throw new UnauthorizedException('Invalid or expired token');
     }
   }
 }
