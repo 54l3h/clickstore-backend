@@ -1,4 +1,11 @@
-import { FilterQuery, Model, PopulateOptions, ProjectionType } from 'mongoose';
+import {
+  DeleteResult,
+  FilterQuery,
+  Model,
+  PopulateOptions,
+  ProjectionType,
+  UpdateQuery,
+} from 'mongoose';
 
 interface IFoundOneOptions<TDocument> {
   filters: FilterQuery<TDocument>;
@@ -42,5 +49,26 @@ export abstract class BaseRepository<TDocument> {
 
   async save(document: TDocument) {
     return this.save(document);
+  }
+
+  async deleteOne(filters: FilterQuery<TDocument>) {
+    if (filters._id) {
+      return await this.model.findByIdAndDelete(filters._id);
+    }
+    return await this.model.findOneAndDelete(filters);
+  }
+
+  async deleteMany(filters: FilterQuery<TDocument>): Promise<DeleteResult> {
+    return await this.model.deleteMany(filters);
+  }
+
+  async updateOne(
+    filters: FilterQuery<TDocument>,
+    update: UpdateQuery<TDocument>,
+  ) {
+    if (filters._id) {
+      return await this.model.findByIdAndUpdate(filters._id, update);
+    }
+    return await this.model.findOneAndDelete(filters, update);
   }
 }

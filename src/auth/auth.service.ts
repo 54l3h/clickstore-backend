@@ -7,13 +7,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SignupDto } from './dto/sign-up.dto';
-import { OtpRepository, UserRepository } from 'src/database/repositories';
+import {
+  OtpRepository,
+  RevokedTokensRepository,
+  UserRepository,
+} from 'src/database/repositories';
 import { Events, OtpService } from 'src/common/utils';
 import { verifyHash } from 'src/common/security';
 import { TokenService } from 'src/common/services';
-import { ConfirmEmailDto, SigninDto } from './dto';
+import { ConfirmEmailDto, LogoutDto, SigninDto } from './dto';
 import { ITokenPayload, OtpEnum, RolesEnum } from 'src/common/types';
 import { Types } from 'mongoose';
+import { SessionInfo } from 'src/database/models';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +27,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly otpRepository: OtpRepository,
     private readonly otpService: OtpService,
+    private readonly revokedTokensRepository: RevokedTokensRepository,
   ) {}
 
   async signup(dto: SignupDto) {
@@ -123,5 +129,13 @@ export class AuthService {
     // OTPs should be deleted after 10 minutes (done)
 
     return { message: 'Email confirmed successfully' };
+  }
+
+  async getProfile(userId) {
+    return await this.userRepository.findById(userId);
+  }
+
+  async logout(sessionInfo: SessionInfo) {
+    await this.revokedTokensRepository.create(sessionInfo);
   }
 }

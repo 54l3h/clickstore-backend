@@ -4,7 +4,7 @@ import { User } from './user.model';
 import slugify from 'slugify';
 
 // Class Schema
-@Schema({})
+@Schema({ timestamps: true })
 export class Category {
   @Prop({
     type: String,
@@ -25,10 +25,10 @@ export class Category {
   slug: string;
 
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
-  createdBy: Types.ObjectId | string;
+  createdBy: Types.ObjectId;
 
   @Prop({ type: Object })
-  image: object;
+  image: { secure_url: string; public_id: string };
 }
 
 // Actual Schema
@@ -37,7 +37,7 @@ const CategorySchema = SchemaFactory.createForClass(Category);
 
 // Model
 
-const CategoryModel = MongooseModule.forFeature([
+export const CategoryModel = MongooseModule.forFeature([
   { name: Category.name, schema: CategorySchema },
 ]);
 

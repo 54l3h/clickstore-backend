@@ -29,3 +29,9 @@ export const RevokedTokenModel = MongooseModule.forFeature([
 // type
 
 export type RevokedTokenType = HydratedDocument<RevokedToken> & Document;
+
+export type SessionInfo = {
+  tokenId: string;
+  userId: string;
+  expiryDate: Date;
+};

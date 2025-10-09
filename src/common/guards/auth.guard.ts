@@ -5,7 +5,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { TokenService } from '../services';
-import { UserRepository } from 'src/database/repositories';
+import {
+  RevokedTokensRepository,
+  UserRepository,
+} from 'src/database/repositories';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -13,6 +16,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly tokenService: TokenService,
     private readonly userRepository: UserRepository,
+    private readonly revokedTokensRepository: RevokedTokensRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -29,22 +33,29 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('Invalid token format');
       }
 
-      const { id, userType } = this.tokenService.verifyToken(
+      const data = this.tokenService.verifyToken(
         token,
         process.env.JWT_ACCESS_SECRET!,
       );
 
-      const user = await this.userRepository.findById(id);
+      const isTokenRevoked = await this.revokedTokensRepository.findOne({
+        filters: { tokenId: data.jti },
+      });
+
+      if (isTokenRevoked)
+        throw new UnauthorizedException('Your session is expired');
+
+      const user = await this.userRepository.findById(data.id);
 
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
 
-      if (user.role !== userType) {
+      if (user.role !== data.userType) {
         throw new UnauthorizedException('Invalid token');
       }
 
-      request['user'] = { id, userType };
+      request['user'] = { ...data };
       return true;
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired token');
