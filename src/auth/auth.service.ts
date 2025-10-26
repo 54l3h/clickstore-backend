@@ -73,7 +73,6 @@ export class AuthService {
   }
 
   async signin(dto: SigninDto) {
-    try {
       const user = await this.userRepository.findByEmail(dto.email);
       if (!user) {
         throw new NotFoundException('User not found');
@@ -88,9 +87,6 @@ export class AuthService {
       };
 
       return this.tokenService.generateTokens(payload);
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to login');
-    }
   }
 
   async confirmEmail(userId: string, dto: ConfirmEmailDto) {

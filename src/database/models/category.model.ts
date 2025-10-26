@@ -27,7 +27,18 @@ export class Category {
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   createdBy: Types.ObjectId;
 
-  @Prop({ type: Object })
+  @Prop({ type: Types.ObjectId, ref: User.name })
+  updatedBy?: Types.ObjectId;
+
+  @Prop({ type: String, required: true })
+  folderId: string;
+
+  @Prop({
+    type: {
+      secure_url: { type: String, required: true },
+      public_id: { type: String, required: true, unique: true },
+    },
+  })
   image: { secure_url: string; public_id: string };
 }
 

@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -17,6 +19,7 @@ import { RolesEnum } from 'src/common/types';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadFileOptions } from 'src/common/utils';
 import { ImageAllowedExtensions } from 'src/common/constants';
+import { Types } from 'mongoose';
 
 @Controller('category')
 export class CategoryController {
@@ -61,5 +64,15 @@ export class CategoryController {
   ) {
     const userId = req['user'].id;
     return this.categoryService.updateCategory(categoryId, userId, dto, image);
+  }
+
+  @Get('/:categoryId')
+  async getCategoryById(@Param('categoryId') categoryId: Types.ObjectId) {
+    return this.categoryService.getCategoryById(categoryId);
+  }
+
+  @Delete('/:categoryId')
+  async deleteCategoryById(@Param('categoryId') categoryId: string) {
+    return this.categoryService.deleteCategoryById(categoryId);
   }
 }

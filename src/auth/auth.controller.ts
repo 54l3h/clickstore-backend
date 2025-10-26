@@ -1,10 +1,16 @@
-import { Controller, Post, Body, Patch, Req, Get, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Req,
+  Get,
+  HttpCode,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto, SigninDto, ConfirmEmailDto, LogoutDto } from './dto';
 import type { Request } from 'express';
-import { Auth, Roles } from 'src/common/decorators';
-import { RolesEnum } from 'src/common/types';
-import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Auth } from 'src/common/decorators';
 import { SessionInfo } from 'src/database/models';
 
 @Controller('auth')
@@ -45,7 +51,7 @@ export class AuthController {
       userId,
       expiryDate: new Date(exp * 1000),
     };
-    
+
     return this.authService.logout(sessionInfo);
   }
 }

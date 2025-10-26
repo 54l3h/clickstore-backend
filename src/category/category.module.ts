@@ -9,5 +9,6 @@ import { UploadService } from 'src/common/services/upload.service';
   controllers: [CategoryController],
   providers: [CategoryService, UploadService, CategoryRepository],
   imports: [CategoryModel],
+  exports: [CategoryService],
 })
 export class CategoryModule {}
